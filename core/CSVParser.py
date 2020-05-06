@@ -1,24 +1,28 @@
 import csv
-import core.Config
+from core.HttpHeaders import HttpHeaders
+from core.HttpMethods import HttpMethods
 
 class CSVParser:
 
-    def __init__(self, config, fcsv, domain):
+    def __init__(self, config):
         self.config = config
-        self.fcsv = fcsv
-        self.domain = domain
+        self.parse()
 
     def parse(self):
-        readCSV = open(self.fcsv, 'r')
+        readCSV = open(self.config.fcsv, 'r')
         data = csv.DictReader(readCSV)
+        i = 0
         for row in data:
-            if row['Request.Hostname'] == self.domain:
+            if row['Request.Hostname'] == self.config.domain:
                 # Run the HTTP Headers Scan
                 # HttpHeaders.process(config, row)
                 method = row['Request.Method']
                 if method == 'GET':
-                    pass
-                    #HttpMethods.getBuilder(self.config, row)
+                    HttpMethods.getBuilder(self.config, row)
+                    print('Step ', i)
+                    i += 1
+                    if i > 10:
+                        break
                 elif method == 'POST':
                     pass
                     #postParamsBuilder(row)

@@ -1,17 +1,14 @@
-class HttpMethods:
+from core.HttpParameters import HttpParameters
 
-    '''
-    def __init__(self, config, data):
-        self.config = config
-        self.data = data
-    '''
+class HttpMethods:
 
     def getBuilder(config, data):
         url = data['Request.Host'] + data['Request.Path']
         # Below will return all payloads in a list
-        params = HttpParameters.process(config, data)
+        parameters = HttpParameters(config, data)
+        print(parameters.payloads)
 
-    def postBuilder(self):
+    def postBuilder(config, data):
         url = data['Request.Host'] + data['Request.Path']
 
 
