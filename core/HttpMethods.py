@@ -2,13 +2,15 @@ from core.HttpParameters import HttpParameters
 
 class HttpMethods:
 
-    def getBuilder(config, data):
-        url = data['Request.Host'] + data['Request.Path']
+    def processBuilder(config, data):
         # Below will return all payloads in a list
         parameters = HttpParameters(config, data)
-        print(parameters.payloads)
+        return parameters.payloads[0]
 
     def postBuilder(config, data):
         url = data['Request.Host'] + data['Request.Path']
+        # Below will return all payloads in a list
+        parameters = HttpParameters(config, data)
+        return parameters.payloads[0]
 
 

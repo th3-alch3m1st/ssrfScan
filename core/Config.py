@@ -16,6 +16,7 @@ class Config:
     def set_config(self):
         self.chunkSize = 5
         self.ssrfpayload = 'http://test'
+        self.timeout = 5
 
     def getParameters(self):
         file = "./db/parameters.txt"

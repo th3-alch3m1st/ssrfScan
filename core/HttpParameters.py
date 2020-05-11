@@ -1,11 +1,24 @@
 import re
+import json
+from urllib.parse import parse_qs
+from urllib.parse import urlencode
 
 class HttpParameters:
 
     def __init__(self, config, data):
         self.config = config
         self.data = data
-        self.processParameters()
+        #self.processParameters()
+
+    def is_xml(self, query):
+        pass
+
+    def is_json(self, query):
+        try:
+            json_object = json.loads(query)
+        except ValueError as e:
+            return False
+        return True
 
     def buildPayloadList(self):
         '''
@@ -30,15 +43,34 @@ class HttpParameters:
     def processParameters(self):
         # 1st option - No parameters in the Request, so fuzz for the ones in the parameters.txt file
         # Split the Requests based on the chunkSize, if 5 then it will add 5 parameters per Request
+        old_parameters = ''
         if self.data['Request.Query'] == 'null' and self.data['Request.Body'] == '':
-            payloads = self.buildPayloadList()
-            self.payloads = payloads
+            new_parameters = self.buildPayloadList()
 
-        # 2nd option - We got GET Request with query parameters
+        # 2nd option - We got GET Request with query parameters or POST Request with parameters in the body in QueryString/JSON format
         # Check if a query parameter is in the parameters.txt, if yes change it to our payload/url
         # If not just send the payloads and append the query params too
-        if self.data['Request.Query'] != 'null':
-            query = self.data['Request.Query']
+        # Convert QueryString to JSON - dict((itm.split('=')[0],itm.split('=')[1]) for itm in query.split('&')) OR json.dumps(parse_qs(query))
+        # Convert JSON to QueryString - 
+        else:
+            if self.data['Request.Query'] != 'null':
+                query = self.data['Request.Query']
+            elif self.data['Request.Body'] != '':
+                query = self.data['Request.Body']
+            old_parameters = query
+
+            # If data is in JSON convert it to normal, edit them and change them back to JSON
+            json_data = False
+            if self.is_json(query):
+                json_data = True
+                print('[**] JSON data: %s' % query)
+                json_query = json.loads(query)
+                query = urlencode(json_query)
+                print('[**] QueryString data: %s' % query)
+                print('[***] converted JSON to QueryString')
+            elif self.is_xml(query):
+                print('Nothing to see')
+
             query_params = query.split('&')
             key_list = []
             for entry in query_params:
@@ -53,11 +85,18 @@ class HttpParameters:
                     updated_payloads.append(payload + '&' + query)
             else:
                 for payload in payloads:
-                    query = self.data['Request.Query']
+                    updateQuery = query
                     for instance in instances:
                         if payload.find(instance+'=') > -1:
                             # If you find url=ex in the payload and in the query, remove it from the query and keep the payload one
-                            query = re.sub('&' + instance + '(=[^&]*)?|^' + instance +'(=[^&]*)?&?', '', query)
-                    updated_payloads.append(payload + '&' + query)
+                            updateQuery = re.sub('&' + instance + '(=[^&]*)?|^' + instance +'(=[^&]*)?&?', '', updateQuery)
+                    updated_payloads.append(payload + '&' + updateQuery)
 
-            self.payloads = updated_payloads
+            new_parameters = updated_payloads
+            if json_data:
+                new_parameters = []
+                for payload in updated_payloads:
+                    json_payload = dict((itm.split('=')[0],itm.split('=')[1]) for itm in payload.split('&'))
+                    new_parameters.append(json_payload)
+
+        return old_parameters, new_parameters

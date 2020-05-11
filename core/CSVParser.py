@@ -1,6 +1,7 @@
 import csv
 from core.HttpHeaders import HttpHeaders
-from core.HttpMethods import HttpMethods
+from core.HttpParameters import HttpParameters
+from core.HttpRun import HttpRun
 
 class CSVParser:
 
@@ -14,21 +15,16 @@ class CSVParser:
         i = 0
         for row in data:
             if row['Request.Hostname'] == self.config.domain:
-                # Run the HTTP Headers Scan
-                # HttpHeaders.process(config, row)
-                method = row['Request.Method']
-                if method == 'GET':
-                    HttpMethods.getBuilder(self.config, row)
-                    print('Step ', i)
-                    i += 1
-                    if i > 10:
-                        break
-                elif method == 'POST':
-                    pass
-                    #postParamsBuilder(row)
-                elif method == 'PUT':
-                    pass
-                    #putParamsBuilder(row)
-                elif method == 'OPTIONS':
-                    pass
-                    #optionsParamsBuilder(row)
+                # Build Request
+                method  = row['Request.Method']
+                host    = row['Request.Host']
+                path    = row['Request.Path']
+                old_headers, new_headers = HttpHeaders.headersBuilder(self.config, row)
+                Parameters = HttpParameters(self.config, row)
+                old_parameters, new_parameters = Parameters.processParameters()
+                # Headers Fuzzing
+                HttpRun.connection(host, path, method, old_parameters, new_headers)
+                # Parameters Fuzzing
+                HttpRun.connection(host, path, method, new_parameters[0], old_headers)
+                break
+
