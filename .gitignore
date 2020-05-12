@@ -1,4 +1,5 @@
 poc.csv
 poc2.csv
+poc3.csv
 
-./core/__pycache__/
+core/__pycache__/
