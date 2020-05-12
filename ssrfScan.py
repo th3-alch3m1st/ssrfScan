@@ -1,6 +1,6 @@
 import sys
 from core.Config import Config
-from core.CSVParser import CSVParser
+from core.HttpParser import HttpParser
 
 def main():
 
@@ -9,7 +9,7 @@ def main():
     print(config.fcsv, config.bearer)
     #sys.exit(1)
 
-    CSVParser(config)
+    HttpParser(config)
 
 if __name__ == '__main__':
     main()

@@ -15,7 +15,7 @@ class Config:
 
     def set_config(self):
         self.chunkSize = 5
-        self.ssrfpayload = 'http://test'
+        self.ssrfpayload = 'https://wss4grph5ulgmp513zy97vtcc3iw6l.bc.th3alchem1st.co.uk/'
         self.timeout = 5
 
     def getParameters(self):
