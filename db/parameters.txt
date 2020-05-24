@@ -30,6 +30,7 @@ connecturl
 content
 contents
 continue
+counturl
 create
 csv
 curfile
@@ -47,6 +48,7 @@ destd
 destination
 destinationurl
 desturl
+dest_url
 dfilename
 dir
 direction
@@ -100,11 +102,15 @@ host
 hostname
 hostnameurl
 html
+http
+https
 i
 iframe
 iframeurl
+image
 imagefile
 images
+image_src
 imageurl
 img
 imgurl
@@ -144,7 +150,10 @@ out
 output
 p
 page
+Page
 pageid
+pageurl
+page_url
 parent
 parse
 path
@@ -153,6 +162,7 @@ pdf
 permalink
 pg
 php_path
+picture
 ping
 popurl
 port
@@ -194,6 +204,7 @@ rename
 reply
 report
 reporturl
+req
 request
 res
 reset
@@ -226,6 +237,7 @@ show
 site
 sites
 siteurl
+source
 sqlfile
 sqlhost
 sqlhost1

@@ -1,11 +1,11 @@
 class HttpHeaders:
 
-    def headersBuilder(config, data):
-        headers = data['Request.Headers'].split(', ')[2:]
+    def headersBuilder(config, headers):
+        parse_headers = headers.split(' || ')[1:]
 
         old_headers = {}
         new_headers = {}
-        for header in headers:
+        for header in parse_headers:
             if header.find(':') > -1:
                 name, value = header.split(':')[0], header.split(':')[1]
                 value = value.replace(' ', '')

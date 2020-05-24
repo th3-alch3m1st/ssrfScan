@@ -6,7 +6,7 @@ def main():
 
     config = Config()
 
-    print(config.fcsv, config.bearer)
+    print(config.fsqlite, config.bearer)
     #sys.exit(1)
 
     HttpParser(config)

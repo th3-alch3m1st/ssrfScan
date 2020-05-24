@@ -2,26 +2,20 @@ import requests
 
 class HttpRun:
 
-    def connection(host, path, method, parameters, headers):
-        print(host + path)
+    def connection(endpoint, path, method, parameters, headers):
         if method == 'GET':
-            url = host + path + '?' + parameters
-            conn = requests.get(url, headers=headers)
+            endpoint += '?' + parameters
+            conn = requests.get(endpoint, headers=headers)
         elif method == 'POST':
-            url = host + path
-            conn = requests.post(url, data=parameters, headers=headers)
+            conn = requests.post(endpoint, data=parameters, headers=headers)
         elif method == 'PUT':
-            url = host + path
-            conn = requests.put(url, data=parameters, headers=headers)
+            conn = requests.put(endpoint, data=parameters, headers=headers)
         elif method == 'PATCH':
-            url = host + path
-            conn = requests.patch(url, data=parameters, headers=headers)
+            conn = requests.patch(endpoint, data=parameters, headers=headers)
         elif method == 'DELETE':
-            url = host + path
-            conn = requests.delete(url, headers=headers)
+            conn = requests.delete(endpoint, data=parameters, headers=headers)
         elif method == 'OPTIONS':
-            url = host + path
-            conn = requests.options(url, headers=headers)
+            conn = requests.options(endpoint, headers=headers)
 
         print(conn)
         conn.close()

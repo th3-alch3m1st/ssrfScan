@@ -5,9 +5,10 @@ from urllib.parse import urlencode
 
 class HttpParameters:
 
-    def __init__(self, config, data):
+    def __init__(self, config, query, body):
         self.config = config
-        self.data = data
+        self.query = query
+        self.body = body
         #self.processParameters()
 
     def is_xml(self, query):
@@ -44,7 +45,7 @@ class HttpParameters:
         # 1st option - No parameters in the Request, so fuzz for the ones in the parameters.txt file
         # Split the Requests based on the chunkSize, if 5 then it will add 5 parameters per Request
         old_parameters = ''
-        if self.data['Request.Query'] == 'null' and self.data['Request.Body'] == '':
+        if self.query == None and self.body == b'':
             new_parameters = self.buildPayloadList()
 
         # 2nd option - We got GET Request with query parameters or POST Request with parameters in the body in QueryString/JSON format
@@ -53,10 +54,11 @@ class HttpParameters:
         # Convert QueryString to JSON - dict((itm.split('=')[0],itm.split('=')[1]) for itm in query.split('&')) OR json.dumps(parse_qs(query))
         # Convert JSON to QueryString - 
         else:
-            if self.data['Request.Query'] != 'null':
-                query = self.data['Request.Query']
-            elif self.data['Request.Body'] != '':
-                query = self.data['Request.Body']
+            if self.query != None:
+                query = self.query
+            elif self.body != b'':
+                # The body is of byte type so decode it using utf-8
+                query = self.body.decode('utf-8')
             old_parameters = query
 
             # If data is in JSON convert it to normal, edit them and change them back to JSON

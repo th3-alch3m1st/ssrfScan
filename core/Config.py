@@ -44,16 +44,16 @@ class Config:
         self.headers = headers
 
     def getArgs(self):
-        parser = argparse.ArgumentParser(description='Parse .csv export from Burp Suite using Logger++ and run SSRF scanner')
+        parser = argparse.ArgumentParser(description='Parse sqlite export from Burp Suite and run SSRF scanner')
 
-        parser.add_argument('-i', type=str, help='.csv file to process', dest='fcsv')
+        parser.add_argument('-i', type=str, help='sqlite file to process', dest='fsqlite')
         parser.add_argument('-d', type=str, help='domain to run scans on', dest='domain')
-        parser.add_argument('-C', type=str, help='cookies to update existing ones in .csv', dest='cookies', default='')
+        parser.add_argument('-C', type=str, help='cookies to update existing ones in sqlite db', dest='cookies', default='')
         parser.add_argument('-H', type=str, help='Is there an Authorization header you want to update?', dest='bearer', default='')
 
         args = parser.parse_args()
 
-        self.fcsv = args.fcsv
+        self.fsqlite = args.fsqlite
         self.domain = args.domain
         self.cookies = args.cookies
         self.bearer = args.bearer
