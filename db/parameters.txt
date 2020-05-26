@@ -288,3 +288,4 @@ widget
 window
 wsdl
 yPath
+linkDestinationUrl

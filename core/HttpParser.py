@@ -27,17 +27,16 @@ class HttpParser:
             print("[*] Start on Headers request is %s", endpoint)
             if host == self.config.domain:
                 # Grab Headers
-                old_headers, new_headers = HttpHeaders.headersBuilder(self.config, headers)
+                old_headers, new_headers = HttpHeaders.headersBuilder(self.config, host, path, headers)
                 print(old_headers, new_headers)
                 # Grab Parameters
-                Parameters = HttpParameters(self.config, query, body)
+                Parameters = HttpParameters(self.config, host, path, query, body)
                 old_parameters, new_parameters = Parameters.processParameters()
                 # Headers Fuzzing
                 HttpRun.connection(endpoint, path, method, old_parameters, new_headers)
 
                 if splitext(path)[1] in extensions or method == 'OPTIONS':
                     continue
-
                 # Parameters Fuzzing
                 print('[*] Start Fuzzing on %s via a %s Request' % (path, method))
                 for parameters in new_parameters:
